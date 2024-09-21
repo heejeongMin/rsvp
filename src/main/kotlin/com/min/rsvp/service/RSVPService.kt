@@ -39,16 +39,16 @@ class RSVPService(
     }
 
     @Transactional(readOnly = true)
-    fun getActive(username: String): RSVPDto? {
+    fun getActive(username: String): List<RSVPDto> {
         val user = userService.getUser(username) ?: throw Error("user not found $username")
-        val rsvp = rsvpRepository.findByUserAndIsActiveIs(user, true)?: return null
+        val rsvp = rsvpRepository.findByUserAndIsActiveIs(user, true)
         return RSVPDto.from(rsvp)
     }
 
     @Transactional(readOnly = false)
     fun close(path: String, username: String) {
         val user = userService.getUser(username) ?: throw Error("user not found $username")
-        val rsvp = rsvpRepository.findByUserAndIsActiveIs(user, true)?: throw Error("cannot find. perhapse it is already closed?")
+        val rsvp = rsvpRepository.findOneByUserAndLinkContainsAndIsActive(user, path, true)?: throw Error("cannot find. Perhaps, it is already closed?")
         rsvp.close()
     }
 }

@@ -7,5 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface RSVPRepository : JpaRepository<RSVP, Long> {
     fun findByUserAndIsActiveIs(user: User, isActive: Boolean, pageable: Pageable): List<RSVP>
-    fun findByUserAndIsActiveIs(user: User, isActive: Boolean): RSVP?
+    fun findByUserAndIsActiveIs(user: User, isActive: Boolean): List<RSVP>
+    fun findOneByUserAndLinkContainsAndIsActive(user: User, link: String, isActive: Boolean): RSVP?
+
 }

@@ -1,6 +1,7 @@
 package com.min.rsvp.domain
 
 import com.min.rsvp.domain.dto.RSVPDto
+import com.min.rsvp.util.RSVPOptionsConverter
 import jakarta.persistence.*
 import java.time.Instant
 import java.util.*
@@ -16,16 +17,19 @@ class RSVP (
     val user: User,
     val name: String,
     val link: String,
-    val email: String,
+    val hostEmail: String,
     val startOn: Instant,
     val endOn: Instant,
-    val location: Instant,
+    val location: String,
+    @Convert(converter = RSVPOptionsConverter::class)
     val options: List<String>,
     val timeLimit: Instant?,
     val description: String?,
     var isActive: Boolean,
     @OneToMany(mappedBy = "rsvp")
-    val responders: List<Responders> = emptyList()
+    val responders: List<Responders> = emptyList(),
+    val createdOn: Instant,
+    val updatedOn: Instant
 ) {
 
     fun close() {
@@ -38,14 +42,16 @@ class RSVP (
                 name = dto.name,
                 user = user,
                 link = host + "/" + path + "/" + UUID.randomUUID(),
-                email = dto.email,
+                hostEmail = dto.email,
                 startOn = dto.startOn,
                 endOn = dto.endOn,
                 location = dto.location,
                 options = dto.options,
                 timeLimit = dto.timeLimit,
                 isActive = true,
-                description = dto.description
+                description = dto.description,
+                createdOn = Instant.now(),
+                updatedOn = Instant.now()
             )
         }
     }

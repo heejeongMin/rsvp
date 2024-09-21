@@ -39,19 +39,13 @@
             <column name="is_active" type="BOOLEAN">
                 <constraints nullable="true"/>
             </column>
-            <column name="link" type="VARCHAR(20)">
+            <column name="link" type="VARCHAR(100)">
                 <constraints nullable="true"/>
             </column>
             <column name="created_on" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="created_by" type="VARCHAR(100)">
-                <constraints nullable="false"/>
-            </column>
             <column name="updated_on" type="TIMESTAMP">
-                <constraints nullable="false"/>
-            </column>
-            <column name="created_by" type="VARCHAR(100)">
                 <constraints nullable="false"/>
             </column>
         </createTable>

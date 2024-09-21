@@ -16,7 +16,7 @@ data class CreateRSVPRequest (
     @field:NotBlank
     val endOn: Instant,
     @field:NotBlank
-    val location: Instant,
+    val location: String,
     @field:NotEmpty
     val options: List<String>,
     val timeLimit: Instant?,

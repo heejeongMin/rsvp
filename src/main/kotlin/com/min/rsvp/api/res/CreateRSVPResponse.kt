@@ -9,7 +9,7 @@ data class CreateRSVPResponse(
     val email: String,
     val startOn: Instant,
     val endOn: Instant,
-    val location: Instant,
+    val location: String,
     val options: List<String>,
     val timeLimit: Instant?,
     val description: String?
