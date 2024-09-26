@@ -1,9 +1,11 @@
 package com.min.rsvp.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.min.rsvp.domain.dto.UserToken
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
+import jakarta.servlet.http.HttpServletRequest
 import java.nio.charset.StandardCharsets.UTF_8
 import java.time.Instant
 import java.util.*
@@ -26,7 +28,7 @@ object JwtHelper {
     }
 
     // Secret key for JWT generation and verification
-    private var SECRET_KEY: String = "YmEyZjU5NzAtODMyZS00NDg4LWI3ZWQtMTZjNDdjNjYyZDI2"
+    private var SECRET_KEY: String = "YmEyZjU5NzAtODMyZS00NDg4LWI3ZWQtMTZjNDdjNjYyZDI2KEIWTN123CILREPWLdfe09KKe"
     // Default expiration time for JWT tokens (365 days)
     private const val EXPIRATION_TIME_MS = 31536000000 // 365 days - Customizable
 
@@ -63,6 +65,7 @@ object JwtHelper {
      * @return Map representing the JWT payload.
      */
     fun generatePayload(
+        username: String,
         subject: String = "rsvp",
         issuer: String = "rsvp",
         audience: String = "rsvp",
@@ -71,17 +74,18 @@ object JwtHelper {
         additionalData: Map<String, Any>? = null
     ): Map<String, Any> {
             val temp = HashMap<String, Any>()
-            val dateTime = System.currentTimeMillis()
+            val dateTime = Instant.now()
             val currentTime = if (issuedAt == "0".toLong()) dateTime else issuedAt
             temp["iss"] = issuer
             temp["iat"] = currentTime
             temp["exp"] = if (expireAt == "0".toLong()) {
-                dateTime + EXPIRATION_TIME_MS
+                dateTime.plusSeconds(86400)
             } else {
-                expireAt + EXPIRATION_TIME_MS
+                expireAt.plus(86400)
             }
             temp["aud"] = audience
             temp["sub"] = subject
+            temp["username"] = username
             additionalData?.let {
                 temp["additional"] = it
             }
@@ -113,6 +117,20 @@ object JwtHelper {
         }
     }
 
+    fun decodeSNSToken(token: String) {
+        val parts = token.split("\\.".toRegex())
+        if (parts.size != 3) {
+            throw Exception("token not valid")
+        }
+
+        val payload = ObjectMapper().readValue(
+            String(Base64.getUrlDecoder().decode(parts[1]), UTF_8), Map::class.java)?: throw Exception("token not valid")
+
+        if(Instant.now().plusMillis(1000).isAfter(Instant.ofEpochSecond(payload["exp"].toString().toLong()))) {
+            throw Exception("token has expired")
+        }
+    }
+
     fun decodeToken(token: String) {
         val parts = token.split("\\.".toRegex())
         if (parts.size != 3) {
@@ -120,12 +138,13 @@ object JwtHelper {
         }
 
         val payload = ObjectMapper().readValue(
-            String(Base64.getUrlDecoder().decode(parts[1]), UTF_8), Map::class.java) as? Map<String, Any> ?: throw Exception("token not valid")
+            String(Base64.getUrlDecoder().decode(parts[1]), UTF_8), Map::class.java)?: throw Exception("token not valid")
 
-        if(Instant.now().plusMillis(1000).isAfter(Instant.ofEpochSecond(payload["exp"].toString().toLong()))) {
+        if(Instant.now().plusMillis(1000).isAfter(Instant.parse(payload["exp"].toString()))) {
             throw Exception("token has expired")
         }
     }
+
 
     /**
      * Verifies the validity of a JWT token.
@@ -277,5 +296,15 @@ object JwtHelper {
      */
     private fun checkForSecretKey() {
         if (SECRET_KEY.isEmpty()) throw Exception("secret key is empty")
+    }
+
+    fun parse(token: String?): UserToken {
+        val claims: Claims = Jwts.parser()
+            .setSigningKey(SECRET_KEY.toByteArray())
+            .parseClaimsJws(token)
+            .body
+//        Fri Dec 20 15:30:22 KST 57697
+
+        return UserToken.of(claims["username", String::class.java], claims.expiration.time)
     }
 }

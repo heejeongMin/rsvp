@@ -4,12 +4,13 @@ import com.min.rsvp.domain.dto.RSVPDto
 
 
 data class GetRSVPHistoryResponse(
-    val responses: List<GetRSVPResponse>
+    val responses: List<GetRSVPResponse>,
+    val pageInfo: PageInfo
 ) {
 
     companion object {
-        fun from(rsvps: List<RSVPDto>): GetRSVPHistoryResponse {
-            return GetRSVPHistoryResponse(GetRSVPResponse.from(rsvps))
+        fun from(rsvps: Pair<List<RSVPDto>, PageInfo>): GetRSVPHistoryResponse {
+            return GetRSVPHistoryResponse(GetRSVPResponse.from(rsvps.first), rsvps.second)
         }
     }
 }

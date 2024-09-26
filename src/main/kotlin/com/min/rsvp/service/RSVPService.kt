@@ -1,14 +1,12 @@
 package com.min.rsvp.service
 
 import com.min.rsvp.domain.RSVP
+import com.min.rsvp.api.res.PageInfo
 import com.min.rsvp.domain.dto.RSVPDto
 import com.min.rsvp.repository.RSVPRepository
-import org.hibernate.query.Page
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
-import org.springframework.data.querydsl.QSort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -31,11 +29,11 @@ class RSVPService(
     }
 
     @Transactional(readOnly = true)
-    fun getHistory(page: Int, size: Int, username: String): List<RSVPDto> {
-        val user = userService.getUser(username) ?: throw Error("user not found ${username}")
+    fun getHistory(page: Int, size: Int, username: String): Pair<List<RSVPDto>, PageInfo> {
+        val user = userService.getUser(username) ?: throw Error("user not found $username")
         val rsvps = rsvpRepository.findByUserAndIsActiveIs(
             user, false, PageRequest.of(page, size, Sort.by("createdOn").descending()))
-        return RSVPDto.from(rsvps)
+        return Pair(RSVPDto.from(rsvps.content), PageInfo.from(rsvps))
     }
 
     @Transactional(readOnly = true)

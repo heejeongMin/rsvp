@@ -1,22 +1,29 @@
 package com.min.rsvp.config
 
 import com.min.rsvp.util.JwtAuthenticationFilter
+import com.min.rsvp.util.JwtHelper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.core.token.TokenService
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+import java.beans.Customizer
 
 @EnableWebSecurity
 @Configuration
 class WebConfig {
 
     @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
+    fun securityFilterChain(
+        http: HttpSecurity,
+        userDetailsService: UserDetailsService,
+    ): SecurityFilterChain {
         http.cors {}
             .sessionManagement { sessionManagement ->
                 sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -26,7 +33,7 @@ class WebConfig {
                     .requestMatchers("/user/login", "/user/logout").permitAll()
                     .anyRequest().authenticated()
             }
-            .addFilterBefore(JwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter::class.java)
+            .addFilterBefore(JwtAuthenticationFilter(userDetailsService), UsernamePasswordAuthenticationFilter::class.java)
             .csrf { csrf -> csrf.disable() }
         return http.build()
     }

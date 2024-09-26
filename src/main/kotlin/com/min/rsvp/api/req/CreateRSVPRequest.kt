@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import java.time.Instant
 
+//todo double check email validation
 data class CreateRSVPRequest (
     @field:NotBlank
     val name: String,
