@@ -1,9 +1,8 @@
 package com.min.rsvp.api
 
 import com.min.rsvp.api.req.CreateRSVPRequest
-import com.min.rsvp.api.res.CreateRSVPResponse
-import com.min.rsvp.api.res.GetRSVPActiveResponse
-import com.min.rsvp.api.res.GetRSVPHistoryResponse
+import com.min.rsvp.api.req.GuestRSVPRequest
+import com.min.rsvp.api.res.*
 import com.min.rsvp.domain.dto.RSVPDto
 import com.min.rsvp.service.RSVPService
 import mu.KotlinLogging
@@ -34,13 +33,24 @@ class RSVPController(
     )
 
     @GetMapping
-    fun getActive(principal: Principal) = ResponseEntity.ok(
-        GetRSVPActiveResponse.from(rsvpService.getActive(principal.name))
+    fun getActiveRSVPList(principal: Principal) = ResponseEntity.ok(
+        GetRSVPActiveListResponse.from(rsvpService.getActiveRSVPList(principal.name))
     )
 
-    @PutMapping("/{path}")
+    @GetMapping("/form/{path}")
+    fun getActiveRSVP(@PathVariable path: String) = ResponseEntity.ok(
+        GetRSVPResponse.from(rsvpService.getActiveRSVP(path))
+    )
+
+    @DeleteMapping("/{path}")
     fun close(@PathVariable path: String, principal: Principal): ResponseEntity<String> {
         rsvpService.close(path, principal.name)
+        return ResponseEntity.ok("success")
+    }
+
+    @PostMapping("/response")
+    fun response(@RequestBody guestRSVPRequest: GuestRSVPRequest): ResponseEntity<String> {
+        rsvpService.rsvp(guestRSVPRequest)
         return ResponseEntity.ok("success")
     }
 

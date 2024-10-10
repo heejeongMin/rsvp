@@ -1,11 +1,11 @@
-package com.min.rsvp.util
+package com.min.rsvp.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.min.rsvp.domain.dto.UserToken
+import com.min.rsvp.domain.exception.ServiceException
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jws
 import io.jsonwebtoken.Jwts
-import jakarta.servlet.http.HttpServletRequest
 import java.nio.charset.StandardCharsets.UTF_8
 import java.time.Instant
 import java.util.*
@@ -43,10 +43,10 @@ object JwtHelper {
      * @param algorithm JWT algorithm to be used (default is ALGORITHM_HS512).
      */
     fun init(key: String, algorithm: JwtAlgorithm = JwtAlgorithm.ALGORITHM_HS512) {
-        this.SECRET_KEY = key
+        SECRET_KEY = key
         checkForSecretKey()
-        this.jwtAlgorithm = algorithm.value
-        this.signatureAlgorithm = when (algorithm) {
+        jwtAlgorithm = algorithm.value
+        signatureAlgorithm = when (algorithm) {
             JwtAlgorithm.ALGORITHM_HS256 -> SignatureAlgorithm.ALGORITHM_HS256.value
             JwtAlgorithm.ALGORITHM_HS384 -> SignatureAlgorithm.ALGORITHM_HS384.value
             JwtAlgorithm.ALGORITHM_HS512 -> SignatureAlgorithm.ALGORITHM_HS512.value
@@ -101,7 +101,7 @@ object JwtHelper {
      */
     fun generateJwtToken(payload: Map<String, Any>): String {
         checkForSecretKey()
-        val header = encodeBase64URL("{\"alg\":\"${jwtAlgorithm}\",\"typ\":\"JWT\"}".toByteArray(UTF_8))
+        val header = encodeBase64URL("{\"alg\":\"$jwtAlgorithm\",\"typ\":\"JWT\"}".toByteArray(UTF_8))
         val encodedPayload = encodeBase64URL(serializeToJson(payload).toByteArray(UTF_8))
         val signature = generateSignature("$header.$encodedPayload")
         return "$header.$encodedPayload.$signature"
@@ -299,11 +299,10 @@ object JwtHelper {
     }
 
     fun parse(token: String?): UserToken {
-        val claims: Claims = Jwts.parser()
+        val claims: Claims =  Jwts.parser()
             .setSigningKey(SECRET_KEY.toByteArray())
             .parseClaimsJws(token)
             .body
-//        Fri Dec 20 15:30:22 KST 57697
 
         return UserToken.of(claims["username", String::class.java], claims.expiration.time)
     }

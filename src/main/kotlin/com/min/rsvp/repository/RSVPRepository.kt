@@ -10,5 +10,6 @@ interface RSVPRepository : JpaRepository<RSVP, Long> {
     fun findByUserAndIsActiveIs(user: User, isActive: Boolean, pageable: Pageable): Page<RSVP>
     fun findByUserAndIsActiveIs(user: User, isActive: Boolean): List<RSVP>
     fun findOneByUserAndLinkContainsAndIsActive(user: User, link: String, isActive: Boolean): RSVP?
+    fun findOneByLinkContains(link: String): RSVP?
 
 }

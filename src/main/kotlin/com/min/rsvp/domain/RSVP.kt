@@ -26,8 +26,8 @@ class RSVP (
     val timeLimit: Instant?,
     val description: String?,
     var isActive: Boolean,
-    @OneToMany(mappedBy = "rsvp")
-    val responders: List<Responders> = emptyList(),
+    @OneToMany(mappedBy = "rsvp", cascade = [CascadeType.ALL])
+    val responders: MutableList<Responders> = mutableListOf(),
     val createdOn: Instant,
     val updatedOn: Instant
 ) {
@@ -41,7 +41,7 @@ class RSVP (
             return RSVP(
                 name = dto.name,
                 user = user,
-                link = host + "/" + path + "/" + UUID.randomUUID(),
+                link = host + "/" + path + "/form/" + UUID.randomUUID(),
                 hostEmail = dto.email,
                 startOn = dto.startOn,
                 endOn = dto.endOn,

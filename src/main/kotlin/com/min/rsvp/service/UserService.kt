@@ -4,7 +4,7 @@ import com.min.rsvp.api.req.LoginRequest
 import com.min.rsvp.domain.User
 import com.min.rsvp.domain.dto.UserDetailsDto
 import com.min.rsvp.repository.UserRepository
-import com.min.rsvp.util.JwtHelper
+import com.min.rsvp.config.JwtHelper
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
