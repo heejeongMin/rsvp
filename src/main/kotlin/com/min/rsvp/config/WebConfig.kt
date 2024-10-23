@@ -40,7 +40,7 @@ class WebConfig {
             override fun addCorsMappings(registry: CorsRegistry) {
                 registry.addMapping("/**")
                     .allowedMethods("*")
-                    .allowedOriginPatterns("http://localhost:3000")
+                    .allowedOriginPatterns("http://localhost:3000", "https://d457-118-32-199-61.ngrok-free.app")
                     .allowCredentials(true)
             }
         }
