@@ -1,1 +1,1 @@
-web: java -jar target/rsvp-1.0.0.jar
+web: java -Dserver.port=$PORT -jar target/rsvp-0.0.1-SNAPSHOT.jar
