@@ -14,7 +14,7 @@ class Responders (
     @JoinColumn(name = "rsvp_id")
     val rsvp: RSVP,
     val name: String,
-    val option: String,
+    val options: String,
     val message: String?,
     val createdOn: Instant
 ) {
@@ -23,7 +23,7 @@ class Responders (
             return Responders(
                 rsvp = rsvp,
                 name = guestRSVPRequest.name,
-                option = guestRSVPRequest.option,
+                options = guestRSVPRequest.options,
                 message = guestRSVPRequest.message,
                 createdOn = Instant.now()
             )

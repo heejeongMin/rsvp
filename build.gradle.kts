@@ -4,6 +4,7 @@ plugins {
 	id("org.springframework.boot") version "3.3.3"
 	id("io.spring.dependency-management") version "1.1.6"
 	kotlin("plugin.jpa") version "1.9.25"
+	kotlin("kapt") version "1.9.25"
 }
 
 group = "com.min"
@@ -53,7 +54,7 @@ dependencies {
 	 * db
 	 */
 	implementation("org.liquibase:liquibase-core")
-	runtimeOnly("org.postgresql:postgresql")
+	runtimeOnly("com.mysql:mysql-connector-j")
 
 	/**
 	 * test
@@ -83,4 +84,34 @@ kotlin {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+	kotlinOptions {
+		freeCompilerArgs = listOf("-Xjsr305=strict")
+		jvmTarget = "17"
+	}
+}
+
+
+tasks.named<Jar>("bootJar"){
+	enabled = true
+}
+
+tasks.named<Jar>("jar") {
+	enabled = false
+	archiveClassifier.set("")
+//	manifest {
+//		attributes["Main-Class"] = "com.min.rsvp.RsvpApplicationKt"
+//	}
+// To avoid the duplicate handling strategy error
+//	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+//
+//	// To add all of the dependencies
+//	from(sourceSets.main.get().output)
+//
+//	dependsOn(configurations.runtimeClasspath)
+//	from({
+//		configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+//	})
 }

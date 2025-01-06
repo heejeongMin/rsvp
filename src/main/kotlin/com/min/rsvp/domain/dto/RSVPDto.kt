@@ -47,7 +47,7 @@ data class RSVPDto(
                 options = rsvp.options,
                 timeLimit = rsvp.timeLimit,
                 description = rsvp.description,
-                responders = ResponderDto.from(rsvp.responders.sortedBy { it.option }),
+                responders = ResponderDto.from(rsvp.responders.sortedBy { it.options }),
                 isActive = rsvp.isActive
             )
         }

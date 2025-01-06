@@ -11,7 +11,7 @@ data class ResponderDto(
         fun from(responder: Responders): ResponderDto {
             return ResponderDto(
                 name = responder.name,
-                option = responder.option,
+                option = responder.options,
                 message = responder.message
             )
         }
