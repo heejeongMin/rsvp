@@ -40,4 +40,3 @@ out/
 .kotlin
 
 local-docker/
-src/main/resources/application.properties
