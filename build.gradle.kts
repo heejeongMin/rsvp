@@ -3,6 +3,7 @@ plugins {
 	kotlin("plugin.spring") version "1.9.25"
 	id("org.springframework.boot") version "3.3.3"
 	id("io.spring.dependency-management") version "1.1.6"
+	id("war")
 	kotlin("plugin.jpa") version "1.9.25"
 	kotlin("kapt") version "1.9.25"
 }
@@ -94,24 +95,20 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 
-tasks.named<Jar>("bootJar"){
+//tasks.named<Jar>("bootJar"){
+//	enabled = true
+//}
+//
+//tasks.named<Jar>("jar") {
+//	enabled = false
+//	archiveClassifier.set("")
+//}
+
+tasks.named<War>("bootWar") {
 	enabled = true
 }
 
-tasks.named<Jar>("jar") {
-	enabled = false
-	archiveClassifier.set("")
-//	manifest {
-//		attributes["Main-Class"] = "com.min.rsvp.RsvpApplicationKt"
-//	}
-// To avoid the duplicate handling strategy error
-//	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-//
-//	// To add all of the dependencies
-//	from(sourceSets.main.get().output)
-//
-//	dependsOn(configurations.runtimeClasspath)
-//	from({
-//		configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
-//	})
-}
+//tasks.named<War>("war") {
+//	enabled = false
+//	archiveClassifier.set("")
+//}
